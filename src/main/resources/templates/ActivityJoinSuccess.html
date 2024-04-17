@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style type="text/css">
+        @media only screen and (max-width: 480px) {
+          table {
+            display: block !important;
+            width: 100% !important;
+          }
+
+          td {
+            width: 480px !important;
+          }
+        }
+    </style>
+</head>
+<body style="font-family: 'Malgun Gothic', Arial, sans-serif; margin: 0; padding: 0; width: 100%; -webkit-text-size-adjust: none; -webkit-font-smoothing: antialiased;">
+<table width="100%" bgcolor="#FFFFFF" border="0" cellspacing="0" cellpadding="0" id="background" style="height: 100% !important; margin: 0; padding: 0; width: 100% !important;">
+    <tr>
+        <td align="center" valign="top">
+            <table width="600" border="0" bgcolor="#F6F6F6" cellspacing="0" cellpadding="20" id="preheader">
+                <tr>
+                    <td valign="top">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td valign="top" width="600">
+                                    <div class="preheader_links">
+                                        <p style="color: #666666; font-size: 10px; line-height: 22px; text-align: right;">Unable to view this message? <a href="javascript:void(0)" :hover="text-decoration: underline;" onclick="myEvent();" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'" style="color: #666666; font-weight: bold; text-decoration: none;">Click here</a></p>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td valign="top" width="600">
+                                    <div class="logo"  style="text-align: center">
+                                        <a href="http://localhost:5173/"  onmouseover="this.style.color='#666666'" onmouseout="this.style.color='#514F4E'" style="color: #514F4E; font-size: 18px; font-weight: bold; text-align: left; text-decoration: none;"><img src="https://res.cloudinary.com/dxz9qtntt/image/upload/v1713077139/v8uswynkfbvhhew9rund.png" style="margin:0;height:100px"></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <!-- // END #preheader -->
+
+            <table width="600" border="0" bgcolor="#FFFFFF" cellspacing="0" cellpadding="0" id="header_container">
+                <tr>
+                    <td align="center" valign="top">
+                        <table width="100%" border="0" bgcolor="#474544" cellspacing="0" cellpadding="0" id="header">
+                            <tr>
+                                <td valign="top" class="header_content">
+                                    <h1 style="color: #F4F4F4; font-size: 24px; text-align: center;">Doggy Paradise 活動報名成功通知</h1>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- // END #header -->
+                    </td>
+                </tr>
+            </table>
+            <!-- // END #header_container -->
+
+            <table width="600" border="0" bgcolor="#C7B39A" cellspacing="0" cellpadding="20" id="body_container">
+                <tr>
+                    <td align="center" valign="top" class="body_content">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="20">
+                            <tr>
+                                <td valign="top">
+                                    <h2 style="color: #FFFFFF; font-size: 22px; text-align: center;">親愛的 ${userName}!</h2>
+                                    <p style="color: #FFFFFF; font-size: 16px; line-height: 22px; text-align: center;">感謝您報名參加了 ${activityTitle}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center"><img src="${imgUrl}" style="width:250px"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center">
+                                    <div>
+                                        <a href="http://localhost:5173/activity/activityPage/${activityId}" style="background-color:#474544;border-radius:3px;color:#FFFFFF;display:inline-block;font-family:'Helvetica',Arial,sans-serif;font-size:13px;height:45px;line-height:45px;text-align:center;text-decoration:none;text-transform:uppercase;width:150px;-webkit-text-size-adjust:none;mso-hide:all;" onmouseover="this.style.backgroundColor='#514F4E'" onmouseout="this.style.backgroundColor='#474544'">參加的活動資訊</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <!-- // END #body_container -->
+
+            <table width="600" border="0" cellspacing="0" cellpadding="20" id="body_info_container">
+                <tr>
+                    <td align="center" valign="top" class="body_info_content">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="20">
+                            <tr>
+                                <td valign="top">
+                                    <h2 style="color: #474544; font-size: 20px; text-align: center;">寵物旅館 Booking Service</h2>
+                                    <p style="color: #666666; font-size: 14px; line-height: 22px; text-align: left;">Doggt Paradise也提供了隨時為心愛的毛孩預訂房間的服務，我們致力於提供毛孩們住宿時享有天堂般的享受，提供根據不同型別的毛孩相對應的房間，讓您的毛孩住的舒適，您也放心!</p><br/>
+                                    <p style="color: #666666; font-size: 14px; line-height: 22px; text-align: center;"><a href="http://localhost:5173/room/b_page" style="background-color:#474544;border-radius:3px;color:#FFFFFF;display:inline-block;font-family:'Helvetica',Arial,sans-serif;font-size:13px;height:45px;line-height:45px;text-align:center;text-decoration:none;text-transform:uppercase;width:150px;-webkit-text-size-adjust:none;mso-hide:all;" onmouseover="this.style.backgroundColor='#514F4E'" onmouseout="this.style.backgroundColor='#474544'">Booking Now</a></p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+            <table width="600" border="0" bgcolor="#F2F2F2" cellspacing="0" cellpadding="20" id="body_item_container">
+                <tr>
+                    <td align="center" valign="top" class="body_item_content">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="20">
+                            <tr>
+                                <td align="center" valign="top">
+                                    <h2 style="color: #474544; font-size: 20px; text-align: center;">交流平台 Community</h2>
+                                    <p style="color: #666666; font-size: 14px; line-height: 22px; text-align: center;">Doggy Paradise 提供了汪汪飼養者們互相交流的平台，輕鬆由指尖開始串接起各個汪汪飼養者的生活，一齊分享養寵的大小事!讓您也能在家輕鬆社交!</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" valign="top">
+                                    <img src="https://res.cloudinary.com/dxz9qtntt/image/upload/v1713102795/ifnffvpzcllt8rl6vi9v.png" alt="Community Image"  style="width:250px" />
+                                    <h2 style="color: #474544; font-size: 20px; text-align: center;"><a href="http://localhost:5173/tweetPage/tweetsWallPage"  onmouseover="this.style.borderBottom='solid 2px #474544'" onmouseout="this.style.borderBottom='none'" style="color: #474544; text-decoration: none;">立即前往</a></h2>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <hr style="background-color: #D0D0D0; border: none; color: #D0D0D0; height: 2px; margin-top: -10px;" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" valign="top">
+                                    <img src="https://res.cloudinary.com/dxz9qtntt/image/upload/v1713102551/food_erah2g.png" alt="Product Image" style="width:150px" />
+                                    <h2 style="color: #474544; font-size: 20px; text-align: center;"><a href="http://localhost:5173/shop/shopPage"  onmouseover="this.style.borderBottom='solid 2px #474544'" onmouseout="this.style.borderBottom='none'" style="color: #474544; text-decoration: none;">寵物用品商城</a></h2>
+                                    <p style="color: #666666; font-size: 14px; line-height: 22px; text-align: left;">買個寵物用品就要到處跑? Doggy Paradise完成您一站買齊所有用品的心願! 趕快來逛逛吧!</p>
+                                    <p style="color: #666666; font-size: 14px; line-height: 22px; text-align: center;">&bull; 汪汪罐頭.</p>
+                                    <p style="color: #666666; font-size: 14px; line-height: 22px; text-align: center;">&bull; 汪汪食品.</p>
+                                    <p style="color: #666666; font-size: 14px; line-height: 22px; text-align: center;">&bull; 汪汪用品.</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+            <table width="600" border="0" bgcolor="#2B5C6B" cellspacing="0" cellpadding="20" id="contact_container">
+                <tr>
+                    <td align="center" valign="top">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="20" id="contact">
+                            <tr>
+                                <td>
+                                    <h2 style="color: #F4F4F4; font-size: 20px; text-align: center;">Address</h2>
+                                    <p style="color: #F4F4F4; font-size: 14px; line-height: 22px; text-align: center;">123 Fake Terrace</p>
+                                </td>
+                                <td>
+                                    <h2 style="color: #F4F4F4; font-size: 20px; text-align: center;">Contact</h2>
+                                    <p style="color: #F4F4F4; font-size: 14px; line-height: 22px; text-align: center;"><strong>Tel:</strong> 555-234-712</p>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- // END #contact -->
+                    </td>
+                </tr>
+            </table>
+            <!-- // END #contact_container -->
+
+            <table width="600" border="0" cellspacing="0" cellpadding="20" id="footer_container">
+                <tr>
+                    <td align="center" valign="top">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="20" id="footer">
+                            <tr>
+                                <td align="center" valign="top" class="social_container">
+                                    <div class="social">
+                                        <a style="background-color:#C7B39A; -webkit-border-radius:50%; border-radius:50%; display:inline-block; height:35px; margin:0 0.215em; width:35px;" onmouseover="this.style.backgroundColor='#CEBCA7'" onmouseout="this.style.backgroundColor='#C7B39A'" href="http://localhost:5173/"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#FFFFFF" style="border: 0; display: block; margin: 8px auto; vertical-align: middle;"><path d="M9 8H6v4h3v12h5V12h3.642L18 8h-4V6.333C14 5.378 14.192 5 15.115 5H18V0h-3.808C10.596 0 9 1.583 9 4.615V8z"/></svg></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="unsubscribe">
+                                        <p style="color: #666666; font-size: 10px; line-height: 22px; text-align: left;"><a href="javascript:void(0)" onclick="myEvent();" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'" style="color: #666666; font-weight: bold; text-decoration: none;">Unsubscribe</a> if you no longer wish to recieve future newsletters.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- // END #footer -->
+                    </td>
+                </tr>
+            </table>
+            <!-- // END #footer_container -->
+        </td>
+    </tr>
+</table>
+<!-- // END #background -->
+</body>
+</html>
