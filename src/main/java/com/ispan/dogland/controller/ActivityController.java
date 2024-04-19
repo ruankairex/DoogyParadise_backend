@@ -19,7 +19,6 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/activity/api")
-@CrossOrigin(allowCredentials = "true",origins = {"http://localhost:5137","http://127.0.0.1:5173"})
 public class ActivityController {
     @Autowired
     private ActivityService activityService;

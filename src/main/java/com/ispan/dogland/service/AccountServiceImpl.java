@@ -29,7 +29,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     public AccountServiceImpl(UserRepository usersRepository,EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder,MailService mailService,Cloudinary cloudinary) {
-
         this.usersRepository = usersRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;

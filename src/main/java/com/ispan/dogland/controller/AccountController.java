@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 
 @RestController
-@CrossOrigin(allowCredentials = "true", origins = { "http://localhost:5173/", "http://127.0.0.1:5173" })
 public class AccountController {
 
     @Autowired
@@ -219,11 +218,13 @@ public class AccountController {
         String oldPassword = requestBody.get("oldPassword");
         String newPassword = requestBody.get("newPassword");
 
+        System.out.println("oldPassword = "+oldPassword);
+        System.out.println("newPassword = "+newPassword);
+
         Passport loginUser=(Passport)session.getAttribute("loginUser");
         Users user = accountService.findUsersByUserId(loginUser.getUserId());
         //google登入後是無密碼狀態
-        if(Objects.equals(user.getUserPassword(), null)){
-
+        if(user.getUserPassword()==null || user.getUserPassword().isEmpty()){
             accountService.resetPassword(user.getUserEmail(), newPassword);
             return ResponseEntity.ok("resetPassword success");
         }
@@ -240,7 +241,7 @@ public class AccountController {
         Passport loginUser=(Passport)session.getAttribute("loginUser");
         Users user = accountService.findUsersByUserId(loginUser.getUserId());
         String userPassword = user.getUserPassword();
-        if(userPassword==null){
+        if(userPassword==null || userPassword.isEmpty()){
             return true;
         }
         return false;

@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/forum")
-@CrossOrigin(allowCredentials = "true", origins = { "http://localhost:5173/", "http://127.0.0.1:5173" })
 public class ForumController {
 
     @Autowired
