@@ -5,11 +5,13 @@ import com.cloudinary.utils.ObjectUtils;
 import com.ispan.dogland.model.dao.EmployeeRepository;
 import com.ispan.dogland.model.dao.UserRepository;
 import com.ispan.dogland.model.dto.Passport;
+import com.ispan.dogland.model.dto.UserDto;
 import com.ispan.dogland.model.entity.Employee;
 import com.ispan.dogland.model.entity.Users;
 import com.ispan.dogland.model.entity.activity.ActivityGallery;
 import com.ispan.dogland.model.entity.activity.VenueActivity;
 import com.ispan.dogland.service.interfaceFile.AccountService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -65,6 +67,15 @@ public class AccountServiceImpl implements AccountService {
         }
         return true;
     }
+
+    @Override
+    public boolean checkPasswordIsEmpty(Users user) {
+        if(user.getUserPassword() !=null && !user.getUserPassword().isEmpty()){
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public Users register(Users user){
         if(user.getUserPassword() !=null){
@@ -73,11 +84,12 @@ public class AccountServiceImpl implements AccountService {
         }
         user.setLastLoginTime(new Date());
         user.setUserStatus("Action");
+        user.setUserViolationCount(0);
         return usersRepository.save(user);
     }
 
     @Override
-    public Users getUserDetail(String email) {
+    public Users getUserDetailByMail(String email) {
         return usersRepository.findByUserEmail(email);
     }
 
@@ -151,6 +163,27 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public Passport updateLoginUser(HttpSession session, Users user) {
+        Passport loginUser = (Passport) session.getAttribute("loginUser");
+        if(!user.getLastName().isEmpty()){
+            loginUser.setUsername(user.getLastName());
+        }
+        if(!user.getUserImgPath().isEmpty()){
+            loginUser.setPhotoUrl(user.getUserImgPath());
+        }
+        session.setAttribute("loginUser", loginUser);
+        return loginUser;
+    }
+
+    @Override
+    public Passport updateImgPathFromLoginUser(HttpSession session, String imgURL) {
+        Passport loginUser = (Passport) session.getAttribute("loginUser");
+        loginUser.setPhotoUrl(imgURL);
+        session.setAttribute("loginUser",loginUser);
+        return loginUser;
+    }
+
+    @Override
     public Users findUsersByLastName(String lastName) {
         return usersRepository.findByLastName(lastName);
     }
@@ -177,5 +210,19 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Users findUsersByTweetId(Integer tweetId) {
         return usersRepository.findUserByTweetId(tweetId);
+    }
+
+    @Override
+    public UserDto packUserIntoDtoWithoutSensitiveData(Users userDetail) {
+        UserDto uto = new UserDto();
+        uto.setUserId(userDetail.getUserId());
+        uto.setLastName(userDetail.getLastName());
+        uto.setUserEmail(userDetail.getUserEmail());
+        uto.setUserGender(userDetail.getUserGender());
+        uto.setBirthDate(userDetail.getBirthDate());
+        uto.setUserViolationCount(userDetail.getUserViolationCount());
+        uto.setUserImgPath(userDetail.getUserImgPath());
+        uto.setUserStatus(userDetail.getUserStatus());
+        return uto;
     }
 }

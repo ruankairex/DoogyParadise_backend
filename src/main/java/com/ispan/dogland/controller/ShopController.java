@@ -68,7 +68,6 @@ public class ShopController {
     @RequestMapping("/cart")
     public List<ShoppingCartDto> getCartByMemberId( HttpSession session){
         Passport loggedInMember = (Passport) session.getAttribute("loginUser");
-//        System.out.println(loggedInMember);
         if(loggedInMember == null){
             throw new RuntimeException("未登入錯誤");
         }

@@ -2,23 +2,32 @@ package com.ispan.dogland.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ispan.dogland.model.dao.DogRepository;
 import com.ispan.dogland.model.dao.EmployeeRepository;
 import com.ispan.dogland.model.dao.UserRepository;
 import com.ispan.dogland.model.dao.tweet.*;
+import com.ispan.dogland.model.dto.UserDto;
 import com.ispan.dogland.model.entity.Dog;
 import com.ispan.dogland.model.entity.Employee;
 import com.ispan.dogland.model.entity.Users;
 import com.ispan.dogland.model.entity.mongodb.TweetData;
 import com.ispan.dogland.model.entity.tweet.*;
+import com.ispan.dogland.service.interfaceFile.AccountService;
 import com.ispan.dogland.service.interfaceFile.TweetService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -57,6 +66,11 @@ public class TweetServiceImpl implements TweetService {
     private Cloudinary cloudinary;
     private TweetOfficialRepository tweetOfficialRepository;
 
+    private AccountService accountService;
+
+    @Value("${gemini_apiKey}")
+    private String apiKey;
+
     @Autowired
     public TweetServiceImpl(TweetRepository tweetRepository,
                             UserRepository userRepository,
@@ -69,7 +83,8 @@ public class TweetServiceImpl implements TweetService {
                             EmployeeRepository employeeRepository,
                             TweetDataRepository tweetDataRepository,
                             Cloudinary cloudinary,
-                            TweetOfficialRepository tweetOfficialRepository) {
+                            TweetOfficialRepository tweetOfficialRepository,
+                            AccountService accountService) {
         this.tweetRepository = tweetRepository;
         this.userRepository = userRepository;
         this.tweetGalleryRepository = tweetGalleryRepository;
@@ -82,6 +97,7 @@ public class TweetServiceImpl implements TweetService {
         this.tweetDataRepository = tweetDataRepository;
         this.cloudinary = cloudinary;
         this.tweetOfficialRepository = tweetOfficialRepository;
+        this.accountService = accountService;
     }
 
     @Override
@@ -579,6 +595,164 @@ public class TweetServiceImpl implements TweetService {
     @Override
     public List<TweetOfficial> findLast3TweetOfficial() {
         return tweetOfficialRepository.findLast3();
+    }
+
+    @Override
+    public Tweet createTweet(Integer memberId, String tweetContent, String imgFileName) {
+        Tweet tweet = new Tweet();
+        Users user = accountService.getUserDetailById(memberId);
+        tweet.setUserName(user.getLastName());
+        tweet.setPreNode(0);
+        tweet.setPostDate(new Date());
+        tweet.setTweetStatus(1);
+        tweet.setNumReport(0);
+        tweet.setTweetContent(tweetContent);
+
+        TweetGallery tweetGallery = new TweetGallery();
+        tweetGallery.setImgPath(imgFileName);
+        tweet.addTweetGallery(tweetGallery);
+
+        return tweet;
+    }
+
+    @Override
+    public Tweet createTweet(Integer memberId, String tweetContent) {
+        Tweet tweet = new Tweet();
+        Users user = accountService.getUserDetailById(memberId);
+        tweet.setUserName(user.getLastName());
+        tweet.setPreNode(0);
+        tweet.setPostDate(new Date());
+        tweet.setTweetStatus(1);
+        tweet.setNumReport(0);
+        tweet.setTweetContent(tweetContent);
+
+        return tweet;
+    }
+
+    @Override
+    public TweetOfficial createAndPostOfficialTweet(Integer memberId, String tweetContent, MultipartFile file, String htmlLink) {
+        if (file.isEmpty()) {
+            return null;
+        }
+        TweetOfficial tweetOfficial = new TweetOfficial();
+        tweetOfficial.setEmployeeId(memberId);
+        tweetOfficial.setPreNode(0);
+        tweetOfficial.setPostDate(new Date());
+        tweetOfficial.setTweetStatus(1);
+        tweetOfficial.setNumReport(0);
+        if (tweetContent != null) {
+            tweetOfficial.setTweetContent(tweetContent);
+        }
+        if(htmlLink != null){
+            tweetOfficial.setTweetLink(htmlLink);
+        }
+
+        //上傳圖片
+        String imgFileName = uploadOfficialImg(file);
+        tweetOfficial.setImgPathCloud(imgFileName);
+        TweetOfficial savedTweetOfficial = saveOfficialTweet(tweetOfficial);
+
+        return savedTweetOfficial;
+    }
+
+    @Override
+    public TweetOfficial createAndPostOfficialTweet(Integer memberId, String tweetContent,String htmlLink) {
+        TweetOfficial tweetOfficial = new TweetOfficial();
+        tweetOfficial.setEmployeeId(memberId);
+        tweetOfficial.setPreNode(0);
+        tweetOfficial.setPostDate(new Date());
+        tweetOfficial.setTweetStatus(1);
+        tweetOfficial.setNumReport(0);
+        if (tweetContent != null) {
+            tweetOfficial.setTweetContent(tweetContent);
+        }
+        if(htmlLink != null){
+            tweetOfficial.setTweetLink(htmlLink);
+        }
+        TweetOfficial savedTweetOfficial = saveOfficialTweet(tweetOfficial);
+        return savedTweetOfficial;
+    }
+
+    @Override
+    public void handleDogTags(Tweet tweet, List<Integer> dogList) {
+        if(!dogList.isEmpty()){
+            Integer tweetId =  tweet.getTweetId();
+            for (Integer dogId : dogList) {
+                Tweet b = tweetRepository.findTweetAndDogsByTweetIdByLEFTJOIN(tweetId);
+                Dog c = dogRepository.findByDogId(dogId);
+                b.addDog(c);
+                Tweet b2 = tweetRepository.save(b);
+            }
+        }
+    }
+
+    @Override
+    public Tweet setTweetReply(Integer tweetId, String tweetContent) {
+        Tweet tweet = new Tweet();
+        tweet.setPreNode(tweetId);
+        tweet.setPostDate(new Date());
+        tweet.setTweetStatus(1);
+        tweet.setNumReport(0);
+        tweet.setTweetContent(tweetContent);
+        return tweet;
+    }
+
+    @Override
+    public List<UserDto> setUsersToDtos(List<Users> users) {
+        List<UserDto> userDtos = new ArrayList<>();
+        for (Users user : users) {
+            UserDto userDto = new UserDto();
+            userDto.setUser(user);
+            userDtos.add(userDto);
+        }
+        return userDtos;
+    }
+
+    @Override
+    public UserDto setUserToDto(Users users) {
+        UserDto userDto = new UserDto();
+        userDto.setUser(users);
+        return userDto;
+    }
+
+    @Override
+    public Map<String, String> evaluateTweetContentByAi(String content) {
+        Map<String,String> map = new HashMap<>();
+        String url = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=" + apiKey;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String contentPrompt =content+"。以上句子若包含仇恨言論、騷擾、露骨的性行為、危險內容嗎?若有請回傳其中可能性最高的一個，若沒有請不要回傳任何值，請用道德高標";
+        String requestBody = "{"
+                + "\"contents\": [{"
+                + "\"parts\": [{\"text\": \"" + contentPrompt + "\"}]"
+                + "}],"
+//                + "\"safetySettings\": [{"
+//                + "\"category\": \"HARM_CATEGORY_DANGEROUS_CONTENT\","
+//                + "\"threshold\": \"BLOCK_NONE\""
+//                + "}],"
+                + "\"generationConfig\": {"
+                + "\"temperature\": 0.1,"
+                + "\"maxOutputTokens\": 30,"
+                + "\"topP\": 0.8,"
+                + "\"topK\": 10"
+                + "}"
+                + "}";
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, requestEntity, String.class);
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode responseJson = mapper.readTree(responseEntity.getBody());
+            for(int i =0;i<=3;i++){
+                JsonNode promptFeedbackNode = responseJson.path("candidates").get(0).get("safetyRatings").get(i);
+                map.put(promptFeedbackNode.get("category").textValue(),promptFeedbackNode.get("probability").textValue());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return map;
     }
 
 

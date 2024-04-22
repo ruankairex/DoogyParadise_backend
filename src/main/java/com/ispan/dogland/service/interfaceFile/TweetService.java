@@ -1,5 +1,6 @@
 package com.ispan.dogland.service.interfaceFile;
 
+import com.ispan.dogland.model.dto.UserDto;
 import com.ispan.dogland.model.entity.Dog;
 import com.ispan.dogland.model.entity.Employee;
 import com.ispan.dogland.model.entity.Users;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TweetService {
 
@@ -24,17 +26,14 @@ public interface TweetService {
 
     public String saveTweetImgToLocal(MultipartFile file);
 
-
     public List<Tweet> getNumOfComment(Integer tweetId);
 
     public List<Tweet> getAllTweetForPage(int page, int limit);
 
     public List<Users> findUserLikesByTweetId(Integer tweetId);
 
-
     //按讚，建立tweet與user的關聯
     public void createLinkWithTweetAndLike(Integer tweetId, Integer userId);
-
 
     public void removeLinkWithTweetAndLike(Integer tweetId, Integer userId);
 
@@ -93,7 +92,6 @@ public interface TweetService {
 
     public Tweet banTweet(Integer tweetId);
 
-
     public String addEmployeeToReport(Integer reportsId, Integer empId);
 
     Employee findEmployeeByReportId(Integer reportId);
@@ -117,4 +115,22 @@ public interface TweetService {
     public TweetOfficial saveTweetOfficial(TweetOfficial tweetOfficial);
 
     public List<TweetOfficial> findLast3TweetOfficial();
+
+    public Tweet createTweet(Integer memberId, String tweetContent, String imgFileName);
+
+    public Tweet createTweet(Integer memberId, String tweetContent);
+
+    public TweetOfficial createAndPostOfficialTweet(Integer memberId, String tweetContent, MultipartFile file, String htmlLink);
+
+    public TweetOfficial createAndPostOfficialTweet(Integer memberId, String tweetContent,String htmlLink);
+
+    public void handleDogTags(Tweet tweet, List<Integer> dogList);
+
+    public Tweet setTweetReply(Integer tweetId, String tweetContent);
+
+    public List<UserDto> setUsersToDtos(List<Users> users);
+
+    public UserDto setUserToDto(Users users);
+
+    public Map<String,String> evaluateTweetContentByAi(String content);
 }

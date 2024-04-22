@@ -41,6 +41,7 @@ public class TweetControllerOpen {
         return tweetService.getAllTweetForPage(page, limit);
     }
 
+    //取得本地端的圖片，**********已棄用*************
     @GetMapping("/getImage/{fileName}")
     public ResponseEntity<byte[]> getImage(@PathVariable String fileName) {
         String imagePath = "D:/image/" + fileName;
@@ -75,11 +76,7 @@ public class TweetControllerOpen {
     @GetMapping("/getUserByTweetId/{tweetId}")
     public UserDto getUserByTweetId(@PathVariable Integer tweetId) {
         Users user = tweetService.findUserByTweetId(tweetId);
-        UserDto userDto = new UserDto();
-        userDto.setUserId(user.getUserId());
-        userDto.setLastName(user.getLastName());
-        userDto.setUserImgPath(user.getUserImgPath());
-        return userDto;
+        return tweetService.setUserToDto(user);
     }
 
     @GetMapping("/getUserIdByTweetId/{tweetId}")
@@ -109,14 +106,7 @@ public class TweetControllerOpen {
     @GetMapping("/getTweetLikesUser")
     public ResponseEntity<List<UserDto>> getTweetLikesUser(@RequestParam Integer tweetId) {
         List<Users> users = tweetService.findUserLikesByTweetId(tweetId);
-        List<UserDto> userDtos= new ArrayList<>();
-
-        UserDto userDto = null;
-        for (Users user : users) {
-            userDto = new UserDto();
-            userDto.setUserWithOutPassword(user);
-            userDtos.add(userDto);
-        }
+        List<UserDto> userDtos= tweetService.setUsersToDtos(users);
         return ResponseEntity.ok(userDtos);
     }
 

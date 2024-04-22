@@ -30,29 +30,23 @@ import java.util.*;
 @RequestMapping("/tweet")
 public class TweetController {
 
-    @Autowired
+
     private DogRepository dogRepository;
-    @Autowired
+
     private TweetRepository tweetRepository;
 
     private TweetService tweetService;
 
     private AccountService accountService;
 
-    @Value("${gemini_apiKey}")
-    private String apiKey;
 
     @Autowired
-    public TweetController(TweetService tweetService, AccountService accountService) {
+    public TweetController(TweetService tweetService, AccountService accountService,TweetRepository tweetRepository,DogRepository dogRepository) {
         this.tweetService = tweetService;
         this.accountService = accountService;
+        this.tweetRepository = tweetRepository;
+        this.dogRepository = dogRepository;
     }
-
-
-
-
-
-
 
 
     @PostMapping("/postTweetWithPhoto")
@@ -63,124 +57,55 @@ public class TweetController {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("Image file is empty");
         }
-        //把圖片存到本地
+        //把圖片存到本地，已棄用
 //        String imgFileName = tweetService.saveTweetImgToLocal(file);
 
         //把圖片存到雲端
         String imgFileName = tweetService.uploadTweetImgToCloud(file);
+        //還沒放進DB狀態
+        Tweet tweet = tweetService.createTweet(memberId, tweetContent, imgFileName);
+        //放進DB
+        Tweet tweetInDB = tweetService.postNewTweet(tweet, memberId);
+        //加上狗的tags
+        tweetService.handleDogTags(tweetInDB, dogList);
+        //發送通知
+        tweetService.sendPostTweetNotificationToFollower(memberId, tweetInDB.getTweetId());
 
-        TweetGallery tweetGallery = new TweetGallery();
-        tweetGallery.setImgPath(imgFileName);
-        if (memberId != null) {
-            Users user = accountService.getUserDetailById(memberId);
-            Tweet tweet = new Tweet();
-            tweet.setUserName(user.getLastName());
-            tweet.setPreNode(0);
-            tweet.setPostDate(new Date());
-            tweet.setTweetStatus(1);
-            tweet.setNumReport(0);
-            if (tweetContent != null) {
-                tweet.setTweetContent(tweetContent);
-            }
-            tweet.addTweetGallery(tweetGallery);
-            Tweet tweet1 = tweetService.postNewTweet(tweet, memberId);
-
-            //狗的tags
-            if(!dogList.isEmpty()){
-                Integer tweetId =  tweet1.getTweetId();
-                for (Integer dogId : dogList) {
-                    Tweet b = tweetRepository.findTweetAndDogsByTweetIdByLEFTJOIN(tweetId);
-                    Dog c = dogRepository.findByDogId(dogId);
-                    b.addDog(c);
-                    Tweet b2 = tweetRepository.save(b);
-                }
-            }
-            //發送通知
-            tweetService.sendPostTweetNotificationToFollower(memberId, tweet1.getTweetId());
-        }
         return ResponseEntity.ok("Tweet posted successfully");
     }
+
 
     @PostMapping("/postTweetOnlyText")
     public ResponseEntity<String> postTweetOnlyText(@RequestParam Integer memberId, @RequestParam String tweetContent,@RequestParam List<Integer> dogList) {
         if (memberId != null) {
-            Users user = accountService.getUserDetailById(memberId);
-            Tweet tweet = new Tweet();
-            tweet.setUserName(user.getLastName());
-            tweet.setPreNode(0);
-            tweet.setPostDate(new Date());
-            tweet.setTweetStatus(1);
-            tweet.setNumReport(0);
-            if (tweetContent != null) {
-                tweet.setTweetContent(tweetContent);
-            }
-            Tweet tweet1 = tweetService.postNewTweet(tweet, memberId);
-
-            //狗的tags
-            if(!dogList.isEmpty()){
-                Integer tweetId =  tweet1.getTweetId();
-                for (Integer dogId : dogList) {
-			        Tweet b = tweetRepository.findTweetAndDogsByTweetIdByLEFTJOIN(tweetId);
-			        Dog c = dogRepository.findByDogId(dogId);
-			        b.addDog(c);
-			        Tweet b2 = tweetRepository.save(b);
-                }
-            }
+            Tweet tweet = tweetService.createTweet(memberId, tweetContent);
+            Tweet tweetInDB = tweetService.postNewTweet(tweet, memberId);
+            //加上狗的tags
+            tweetService.handleDogTags(tweetInDB, dogList);
             //發送通知
-            tweetService.sendPostTweetNotificationToFollower(memberId, tweet1.getTweetId());
+            tweetService.sendPostTweetNotificationToFollower(memberId, tweetInDB.getTweetId());
+
         }
         return ResponseEntity.ok("Tweet posted successfully");
     }
 
-    //官方發文+本地圖片
+    //官方發文+圖片
     @PostMapping("/postTweetWithPhotoByOfficial")
     public ResponseEntity<String> postTweetWithPhotoByOfficial(@RequestParam Integer memberId,
                                             @RequestParam String tweetContent,
                                             @RequestParam("image") MultipartFile file,
                                             @RequestParam String htmlLink) {
-        TweetOfficial tweetOfficial = new TweetOfficial();
-        tweetOfficial.setEmployeeId(memberId);
-        tweetOfficial.setPreNode(0);
-        tweetOfficial.setPostDate(new Date());
-        tweetOfficial.setTweetStatus(1);
-        tweetOfficial.setNumReport(0);
-        if (tweetContent != null) {
-            tweetOfficial.setTweetContent(tweetContent);
-        }
-        if(htmlLink != null){
-            tweetOfficial.setTweetLink(htmlLink);
-        }
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("Image file is empty");
-        }
-        //把圖片存到雲端
-        String imgFileName = tweetService.uploadOfficialImg(file);
-        tweetOfficial.setImgPathCloud(imgFileName);
-        TweetOfficial tweetOfficial1 = tweetService.saveOfficialTweet(tweetOfficial);
-        System.out.println(tweetOfficial1.toString());
-        return ResponseEntity.ok("Tweet posted successfully");
+        tweetService.createAndPostOfficialTweet(memberId, tweetContent, file, htmlLink);
+        return ResponseEntity.ok("TweetOfficial posted successfully");
     }
 
-    //官方發文+本地圖片
+    //官方發文
     @PostMapping("/postTweetWithOutPhotoByOfficial")
     public ResponseEntity<String> postTweetOnlyTextByOfficial(@RequestParam Integer memberId,
                                                               @RequestParam String tweetContent,
                                                               @RequestParam String htmlLink) {
-        TweetOfficial tweetOfficial = new TweetOfficial();
-        tweetOfficial.setEmployeeId(memberId);
-        tweetOfficial.setPreNode(0);
-        tweetOfficial.setPostDate(new Date());
-        tweetOfficial.setTweetStatus(1);
-        tweetOfficial.setNumReport(0);
-        if (tweetContent != null) {
-            tweetOfficial.setTweetContent(tweetContent);
-        }
-        if(htmlLink != null){
-            tweetOfficial.setTweetLink(htmlLink);
-        }
-        TweetOfficial tweetOfficial1 = tweetService.saveOfficialTweet(tweetOfficial);
-        System.out.println(tweetOfficial1.toString());
-        return ResponseEntity.ok("Tweet posted successfully");
+        tweetService.createAndPostOfficialTweet(memberId, tweetContent, null, htmlLink);
+        return ResponseEntity.ok("TweetOfficial posted successfully");
     }
 
     //找到該則tweet的所有按讚數量
@@ -263,12 +188,8 @@ public class TweetController {
     //回覆貼文(純文字)
     @PostMapping("/replyTweet")
     public String replyTweet(@RequestParam Integer tweetId, @RequestParam Integer memberId, @RequestParam String tweetContent) {
-        Tweet tweet = new Tweet();
-        tweet.setPreNode(tweetId);
-        tweet.setPostDate(new Date());
-        tweet.setTweetStatus(1);
-        tweet.setNumReport(0);
-        tweet.setTweetContent(tweetContent);
+
+        Tweet tweet = tweetService.setTweetReply(tweetId, tweetContent);
         tweetService.postNewTweet(tweet, memberId);
         return "replyTweet successfully!";
     }
@@ -325,13 +246,7 @@ public class TweetController {
     @GetMapping("/getMyFollowUsers")
     public List<UserDto> getMyFollowUsers(@RequestParam Integer userId) {
         List<Users> users = tweetService.findAllFollowUsersByUserId(userId);
-        List<UserDto> userDtos = new ArrayList<>();
-        for (Users user : users) {
-            UserDto userDto = new UserDto();
-            userDto.setUser(user);
-            userDtos.add(userDto);
-        }
-        return userDtos;
+        return tweetService.setUsersToDtos(users);
     }
 
 
@@ -423,7 +338,8 @@ public class TweetController {
         }else{
             TweetReport tweetReport = tweetService.addReportToTweet(tweetId, userId, reportText, reportCheckBox);
 
-            Map<String, String> response = evaluateTweetContentByAi(content);
+            //送到Gemini API
+            Map<String, String> response = tweetService.evaluateTweetContentByAi(content);
             if (response != null) {
                 String sexuality = response.get("HARM_CATEGORY_SEXUALLY_EXPLICIT");
                 String hateSpeech = response.get("HARM_CATEGORY_HATE_SPEECH");
@@ -459,44 +375,7 @@ public class TweetController {
 
 
 
-    public Map<String,String> evaluateTweetContentByAi(String content) {
-        Map<String,String> map = new HashMap<>();
-        String url = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=" + apiKey;
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        String contentPrompt =content+"。以上句子若包含仇恨言論、騷擾、露骨的性行為、危險內容嗎?若有請回傳其中可能性最高的一個，若沒有請不要回傳任何值，請用道德高標";
-        String requestBody = "{"
-                + "\"contents\": [{"
-                + "\"parts\": [{\"text\": \"" + contentPrompt + "\"}]"
-                + "}],"
-//                + "\"safetySettings\": [{"
-//                + "\"category\": \"HARM_CATEGORY_DANGEROUS_CONTENT\","
-//                + "\"threshold\": \"BLOCK_NONE\""
-//                + "}],"
-                + "\"generationConfig\": {"
-                + "\"temperature\": 0.1,"
-                + "\"maxOutputTokens\": 30,"
-                + "\"topP\": 0.8,"
-                + "\"topK\": 10"
-                + "}"
-                + "}";
-
-        RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, requestEntity, String.class);
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode responseJson = mapper.readTree(responseEntity.getBody());
-            for(int i =0;i<=3;i++){
-                JsonNode promptFeedbackNode = responseJson.path("candidates").get(0).get("safetyRatings").get(i);
-                map.put(promptFeedbackNode.get("category").textValue(),promptFeedbackNode.get("probability").textValue());
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return map;
-    }
 
 
 
