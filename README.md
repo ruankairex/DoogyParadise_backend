@@ -37,7 +37,7 @@ JDK 17
 
 ## 進階
 - 進階1
-    - 結合個人github上的Python Flask專案(尚未上傳)與MongoDB(相關設定會至於Python Flask專案)，可以開通員工後台中推文圖表的功能
+    - 結合個人github上的[Python Flask專案](https://github.com/ruankairex/DoogyParadise_back_Flask)與MongoDB(相關設定會至於Python Flask專案)，可以開通員工後台中推文圖表的功能
     - 一旦 Flask 專案部署完成並且 MongoDB 連接設定完成，就可以開始在員工後台中使用推文圖表的功能。這些圖表可以使用前端 JavaScript 圖表庫（Chart.js）來呈現從 MongoDB 中獲取的推文數據，以便用戶可以直觀地了解推文的情況。
 
 - 進階2
