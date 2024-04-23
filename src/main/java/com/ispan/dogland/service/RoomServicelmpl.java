@@ -61,14 +61,40 @@ public class RoomServicelmpl implements RoomService {
 
     // 新增訂房
     @Override
-    public Integer addRoomReservation(RoomReservation roomReservation,
+    public synchronized Integer addRoomReservation(RoomReservation roomReservation,
                                    Integer roomId,
                                    Integer dogId,
                                    Integer userId) {
-        roomReservation.setRoom(roomRepository.findByRoomId(roomId));
-        roomReservation.setDog(dogRepository.findByDogId(dogId));
-        roomReservation.setUser(usersRepository.findByUserId(userId));
-        return reservationRepository.save(roomReservation).getReservationId();
+
+        Date start = roomReservation.getStartTime(); // 訂單的起始日
+        Date end = roomReservation.getEndTime();   // 訂單的退房日
+        List<RoomReservationDto> room = this.findRoomReservationByRoomId(roomId);
+
+        boolean isVacant = true; // 預設為空房
+        for (RoomReservationDto r : room) {
+            // 訂單的起始日和退房日
+            Date rStart = r.getStartTime();
+            Date rEnd = r.getEndTime();
+            // 如果訂單的起始日或退房日在目標訂單的起始日和退房日之間，則該房間不是空房
+            if ((rStart.compareTo(start) >= 0 && rStart.compareTo(end) < 0) ||
+                    (rEnd.compareTo(start) > 0 && rEnd.compareTo(end) <= 0)) {
+                isVacant = false; // 房間已被訂購，不是空房
+                break; // 已經找到了一筆訂單，不需要再繼續比對
+            }
+        }
+        if (isVacant) {
+            System.out.println("該房間為空房，可以預訂。");
+            roomReservation.setRoom(roomRepository.findByRoomId(roomId));
+            roomReservation.setDog(dogRepository.findByDogId(dogId));
+            roomReservation.setUser(usersRepository.findByUserId(userId));
+            return reservationRepository.save(roomReservation).getReservationId();
+        } else {
+            System.out.println("該房間已被預訂，請選擇其他日期或其他房間。");
+            return null;
+        }
+
+
+
     }
 
     // 修改訂房時間(修改訂房時間、取消訂房、評分)
@@ -257,6 +283,37 @@ public class RoomServicelmpl implements RoomService {
         List<RoomReservationDto> roomReservationDtoList = new ArrayList<>();
 
         for (RoomReservation roomReservation : reservationRepository.findAll()) {
+
+            RoomReservationDto roomReservationDto = new RoomReservationDto();
+
+            roomReservationDto.setReservationId(roomReservation.getReservationId());
+            roomReservationDto.setRoom(roomReservation.getRoom());
+            roomReservationDto.setUserId(roomReservation.getUser().getUserId());
+            roomReservationDto.setLastName(roomReservation.getUser().getLastName());
+            roomReservationDto.setDog(roomReservation.getDog());
+            roomReservationDto.setStartTime(roomReservation.getStartTime());
+            roomReservationDto.setEndTime(roomReservation.getEndTime());
+            roomReservationDto.setTotalPrice(roomReservation.getTotalPrice());
+            roomReservationDto.setReservationTime(roomReservation.getReservationTime());
+            roomReservationDto.setCancelTime(roomReservation.getCancelTime());
+            roomReservationDto.setCancelDirection(roomReservation.getCancelDirection());
+            roomReservationDto.setStar(roomReservation.getStar());
+            roomReservationDto.setConments(roomReservation.getConments());
+            roomReservationDto.setConmentsTime(roomReservation.getConmentsTime());
+
+            roomReservationDtoList.add(roomReservationDto);
+        }
+
+        return roomReservationDtoList;
+    }
+
+
+
+    @Override
+    public List<RoomReservationDto> findRoomReservationByRoomId(Integer roomId) {
+        List<RoomReservationDto> roomReservationDtoList = new ArrayList<>();
+
+        for (RoomReservation roomReservation : reservationRepository.findByRoomId(roomId)) {
 
             RoomReservationDto roomReservationDto = new RoomReservationDto();
 

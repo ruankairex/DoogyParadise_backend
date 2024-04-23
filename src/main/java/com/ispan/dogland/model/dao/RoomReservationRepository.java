@@ -12,6 +12,9 @@ public interface RoomReservationRepository extends JpaRepository<RoomReservation
     @Query("SELECT r FROM RoomReservation r ORDER BY r.startTime DESC")
     List<RoomReservation> findAll();
 
+    @Query("SELECT r FROM RoomReservation r JOIN FETCH r.room WHERE r.room.roomId = ?1 ORDER BY r.startTime DESC")
+    List<RoomReservation> findByRoomId(Integer roomId);
+
     @Query("SELECT r FROM RoomReservation r WHERE r.user = ?1 ORDER BY r.startTime DESC")
     List<RoomReservation> findByUser(Users user);
 

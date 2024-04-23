@@ -7,6 +7,7 @@ import com.ispan.dogland.model.dao.RoomReservationRepository;
 import com.ispan.dogland.model.dao.UserRepository;
 import com.ispan.dogland.model.dao.product.ProductRepository;
 import com.ispan.dogland.model.dao.tweet.*;
+import com.ispan.dogland.model.dto.RoomReservationDto;
 import com.ispan.dogland.model.entity.Dog;
 import com.ispan.dogland.model.entity.Employee;
 import com.ispan.dogland.model.entity.Users;
@@ -59,7 +60,6 @@ public class DoglandApplication {
 											   TweetController tweetController,
 											   TweetOfficialRepository tweetOfficialRepository) {
 		return runner -> {
-
 		};
 
 

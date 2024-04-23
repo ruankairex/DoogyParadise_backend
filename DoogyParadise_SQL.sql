@@ -514,5 +514,24 @@ VALUES
 (109, 3, 130, '9999', 'https://res.cloudinary.com/dxz9qtntt/image/upload/f_auto,q_auto/v1/roomFolder/xe9jmghz6daogrnsdw9u'),
 (110, 2, 140, '0000', 'https://res.cloudinary.com/dxz9qtntt/image/upload/f_auto,q_auto/v1/roomFolder/kcfoh49sq9243p6ejp9m');
 
+CREATE TABLE room_reservation (
+    reservation_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    room_id INT,
+    dog_id INT,
+    start_time DATETIME,
+    end_time DATETIME,
+    total_price INT,
+    reservation_time DATETIME,
+    cancel_time DATETIME,
+    cancel_direction VARCHAR(50),
+    payment_method VARCHAR(20),
+    payment_status VARCHAR(20),
+    star INT,
+    conments VARCHAR(255),
+    conments_time DATETIME,
+    conments_class VARCHAR(255),
+    FOREIGN KEY (`room_id`) REFERENCES `room`(`room_id`)
+);
 
 SET FOREIGN_KEY_CHECKS = 1;

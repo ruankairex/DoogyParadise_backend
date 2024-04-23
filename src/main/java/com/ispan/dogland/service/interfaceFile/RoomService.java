@@ -36,6 +36,8 @@ public interface RoomService {
 
     public List<RoomReservationDto> findAllRoomReservation();
 
+    public List<RoomReservationDto> findRoomReservationByRoomId(Integer roomId);
+
     public List<ScoreDto> findAllScore();
 
     public Room findByRoomId(Integer roomId);

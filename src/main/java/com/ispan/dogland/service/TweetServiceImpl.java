@@ -625,7 +625,6 @@ public class TweetServiceImpl implements TweetService {
         tweet.setTweetStatus(1);
         tweet.setNumReport(0);
         tweet.setTweetContent(tweetContent);
-
         return tweet;
     }
 
@@ -646,7 +645,6 @@ public class TweetServiceImpl implements TweetService {
         if(htmlLink != null){
             tweetOfficial.setTweetLink(htmlLink);
         }
-
         //上傳圖片
         String imgFileName = uploadOfficialImg(file);
         tweetOfficial.setImgPathCloud(imgFileName);
