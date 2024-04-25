@@ -4,7 +4,7 @@
 會員系統:登入、註冊、忘記密碼、Google OAuth2第三方登入。
 
 ## 這是網站的後端程式
-使用Spring Boot進行開發，所有的依賴都在pom檔，properties設定請看以下的快速開始。
+使用Maven專案Spring Bootd框架進行開發，所有的依賴都在pom檔，properties設定請看以下的快速開始。
 
 ## 環境
 - MySQL:8.0.31
