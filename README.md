@@ -7,8 +7,8 @@
 使用Spring Boot進行開發，所有的依賴都在pom檔，properties設定請看以下的快速開始。
 
 ## 環境
-MySQL:8.0.31
-JDK 17
+- MySQL:8.0.31
+- JDK 17
 ## 功能特色
 
 - 功能1：串接第3方
