@@ -286,7 +286,7 @@ public class TweetController {
         t1.setIsRead(1);
         tweetService.saveTweetNotification(t1);
 
-        return "isRead 属性已修改";
+        return "isRead changed successfully";
     }
 
 

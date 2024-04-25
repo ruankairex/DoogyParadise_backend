@@ -90,7 +90,7 @@ public class RoomServicelmpl implements RoomService {
             return reservationRepository.save(roomReservation).getReservationId();
         } else {
             System.out.println("該房間已被預訂，請選擇其他日期或其他房間。");
-            return null;
+            return 0;
         }
 
 

@@ -31,6 +31,7 @@ public class RoomController {
                         @RequestParam Integer dogId,
                         HttpSession session) {
         Passport loginUser = (Passport) session.getAttribute("loginUser");
+        //若回傳0代表訂房失敗
         return rService.addRoomReservation(roomReservation, roomId, dogId, loginUser.getUserId());
     }
 

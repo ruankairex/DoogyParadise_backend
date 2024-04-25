@@ -115,7 +115,7 @@ public class ActivityController {
 
     //===============使用者與狗狗報名活動===============
     @PostMapping("/JoinActivity")
-    public List<ApplyData> userDogsJoin(@RequestParam Integer userId,
+    public synchronized List<ApplyData> userDogsJoin(@RequestParam Integer userId,
                                         @RequestParam String note,
                                         @RequestParam Integer[] dogIdList,
                                         @RequestParam Integer activityId){
@@ -123,6 +123,7 @@ public class ActivityController {
         Integer activityDogNumber = activity.getActivityDogNumber();
         Integer currentDogNumber = activity.getCurrentDogNumber();
         Integer length = dogIdList.length;
+
         if(activityDogNumber>=currentDogNumber+length){
             ActivityUserJoined userJoined = activityService.userApply(userId, note,activityId);
             List<ApplyData> joinedMembers=new ArrayList<>();

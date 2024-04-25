@@ -5,7 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("google-oauth2.properties")  // 把該檔案放到 resourse 底下
+//@PropertySource("google-oauth2.properties")  // 把該檔案放到 resourse 底下 //沒加classpath:的話，單元測試會炸
+@PropertySource("classpath:google-oauth2.properties")
 public class GoogleOauthConfig {
 
     @Value("${client_id}")

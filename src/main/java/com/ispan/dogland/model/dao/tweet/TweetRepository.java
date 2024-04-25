@@ -18,10 +18,10 @@ public interface TweetRepository extends JpaRepository<Tweet, Integer> {
 
     @Query("SELECT t FROM Tweet t LEFT JOIN t.tweetGalleries WHERE t.user.userId = ?1 AND t.tweetStatus = 1 ORDER BY t.postDate DESC")
     List<Tweet> findTweetsAndCommentsByUserId(Integer userId);
+
     //找所有推文與圖片
     @Query("SELECT t FROM Tweet t LEFT JOIN t.tweetGalleries WHERE t.tweetStatus = 1")
     List<Tweet> findAllTweetsWithGallery();
-
 
     @Query("FROM Tweet t ")
     List<Tweet> findAllTweetsOnly();

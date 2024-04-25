@@ -65,7 +65,6 @@ public class TweetServiceImpl implements TweetService {
     private TweetDataRepository tweetDataRepository;
     private Cloudinary cloudinary;
     private TweetOfficialRepository tweetOfficialRepository;
-
     private AccountService accountService;
 
     @Value("${gemini_apiKey}")
